@@ -24,7 +24,7 @@ class _LazyLoadingListViewState extends State<LazyLoadingListView> {
 
     await Future.delayed(
       const Duration(
-        milliseconds: 500,
+        milliseconds: 1000,
       ),
     );
 
@@ -73,46 +73,31 @@ class _LazyLoadingListViewState extends State<LazyLoadingListView> {
               child: CircularProgressIndicator(),
             );
           } else {
-            return Stack(
-              children: [
-                ListView.separated(
-                  controller: _scrollController,
-                  itemBuilder: ((context, index) {
-                    if (index < items.length) {
-                      return ListTile(
-                        title: Text(items[index]),
-                      );
-                    } else {
-                      return SizedBox(
-                        width: constraints.maxWidth,
-                        height: 50,
-                        child: const Center(
-                          child: Text('Nothing more to load...'),
-                        ),
-                      );
-                    }
-                  }),
-                  separatorBuilder: (context, index) {
-                    return const Divider(
-                      height: 1,
-                    );
-                  },
-                  itemCount: items.length + (allLoaded ? 1 : 0),
-                ),
-                if (loading) ...[
-                  Positioned(
-                    left: 0,
-                    bottom: 0,
-                    child: SizedBox(
-                      width: constraints.maxWidth,
-                      height: 80,
-                      child: const Center(
-                        child: CircularProgressIndicator(),
-                      ),
+            return ListView.separated(
+              controller: _scrollController,
+              itemBuilder: ((context, index) {
+                if (index < items.length) {
+                  return ListTile(
+                    title: Text(items[index]),
+                  );
+                } else {
+                  return SizedBox(
+                    width: constraints.maxWidth,
+                    height: 60,
+                    child: Center(
+                      child: allLoaded
+                          ? const Text('Nothing more to load...')
+                          : const CircularProgressIndicator(),
                     ),
-                  ),
-                ]
-              ],
+                  );
+                }
+              }),
+              separatorBuilder: (context, index) {
+                return const Divider(
+                  height: 1,
+                );
+              },
+              itemCount: items.length + ((loading || allLoaded) ? 1 : 0),
             );
           }
         }),
